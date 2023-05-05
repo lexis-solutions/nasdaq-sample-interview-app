@@ -1,0 +1,19 @@
+.max-w-sm {
+  max-width: 36rem;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.m-auto {
+  margin: auto;
+}
+
+.text-red {
+  color: #ff0000;
+}
+
+.mt {
+  margin-top: 2rem;
+}
