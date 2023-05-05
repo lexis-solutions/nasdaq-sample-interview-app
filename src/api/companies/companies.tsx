@@ -3,7 +3,7 @@ import {
   NASDAQ_COMPANIES,
   NASDAQ_COMPANY_BASE_URL,
   PROXY_URL,
-} from '../../constants/api/requests';
+} from '../../constants/api';
 
 const options = {
   method: 'GET',
@@ -14,9 +14,7 @@ const options = {
   },
 };
 
-export async function getCompanies(
-  query?: string
-): Promise<Companies | string> {
+export async function getCompanies(query?: string): Promise<Companies> {
   const encodedURL = encodeURIComponent(
     `${NASDAQ_COMPANIES}${query ? `&query=${query}` : ''}`
   );
@@ -27,16 +25,16 @@ export async function getCompanies(
   if (response.status !== 200) {
     try {
       const { quandl_error } = await response.json();
-      return quandl_error?.message;
+      throw new Error(quandl_error?.message);
     } catch (error) {
-      return `Something went wrong: ${error}`;
+      throw new Error(`Something went wrong: ${error}`);
     }
   }
 
   return response.json();
 }
 
-export async function getCompany(company?: string): Promise<Company | string> {
+export async function getCompany(company?: string): Promise<Company> {
   const params = `/data.json?collapse=annual&order=asc&column_index=4${process.env.REACT_APP_API_KEY}`;
   const encodedURL = encodeURIComponent(
     `${NASDAQ_COMPANY_BASE_URL}${company}${params}`
@@ -48,9 +46,9 @@ export async function getCompany(company?: string): Promise<Company | string> {
   if (response.status !== 200) {
     try {
       const { quandl_error } = await response.json();
-      return quandl_error?.message;
+      throw new Error(quandl_error?.message);
     } catch (error) {
-      return `Something went wrong: ${error}`;
+      throw new Error(`Something went wrong: ${error}`);
     }
   }
   return response.json();

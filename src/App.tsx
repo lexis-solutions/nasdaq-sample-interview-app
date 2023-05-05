@@ -8,7 +8,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Line } from 'react-chartjs-2';
 import { lineChartCommonOptions } from './constants/chart';
-import useDebounce from './hooks/useDebounce';
+import useDebounce from './hooks/use-debounce';
 
 Chart.register(...registerables);
 
@@ -24,15 +24,14 @@ function App() {
   // fetch the default list of companies or narrow the results with search
   useEffect(() => {
     async function fetchData() {
-      setIsLoading(true);
-      const data = await getCompanies(debouncedSearch);
-      setIsLoading(false);
-
-      if (typeof data === 'string') {
-        setError(data);
-      } else {
+      try {
+        setIsLoading(true);
+        const data = await getCompanies(debouncedSearch);
         setCompanies(data);
+      } catch (error) {
+        setError(`${error}`);
       }
+      setIsLoading(false);
     }
 
     fetchData();
@@ -47,15 +46,14 @@ function App() {
         return;
       }
 
-      setIsLoading(true);
-      const data = await getCompany(selectedOption?.label);
-      setIsLoading(false);
-
-      if (typeof data === 'string') {
-        setError(data);
-      } else {
+      try {
+        setIsLoading(true);
+        const data = await getCompany(selectedOption?.label);
         setCompanyData(data.dataset_data.data);
+      } catch (error) {
+        setError(`${error}`);
       }
+      setIsLoading(false);
     }
 
     fetchData();
@@ -110,7 +108,7 @@ function App() {
         />
         {error && <p className="text-red">{error}</p>}
         {companyData.length !== 0 && (
-          <div className="mt">
+          <div className="mt-2">
             <Line {...dataset} />
           </div>
         )}
